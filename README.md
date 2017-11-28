@@ -1,4 +1,4 @@
-## REST API server for categorizer
+## REST API server for QA system
 
 ### Start
 
@@ -9,7 +9,7 @@
 
 | Endpoints       | Body                                     |
 |-----------------|------------------------------------------|
-| `POST /categorize` | **{question : 'Whatever is your question?'}**|
+| `POST /qa` | **{question : 'Whatever is your question?'}**|
 
 ### cURL
 
