@@ -1,17 +1,16 @@
+import sys
+import os
+import udc_model
+import udc_hparams
+import dual_encoder_gru
+import numpy as np
+import tensorflow as tf
 from flask_api import FlaskAPI
 from flask import request, jsonify
 from flask_cors import CORS
-import sys
-import numpy as np
-import tensorflow as tf
-from qamodel import udc_model
-from qamodel import udc_hparams
-from qamodel.models.dual_encoder_gru import dual_encoder_model
-# import csv
-import os
 
-tf.flags.DEFINE_string("model_dir", "qamodel/runs/GRU", "Directory to load model checkpoints from")
-tf.flags.DEFINE_string("vocab_processor_file", "qamodel/runs/GRU/vocab_processor.bin", "Saved vocabulary processor file")
+tf.flags.DEFINE_string("model_dir", "momdels/GRU", "Directory to load model checkpoints from")
+tf.flags.DEFINE_string("vocab_processor_file", "models/GRU/vocab_processor.bin", "Saved vocabulary processor file")
 FLAGS = tf.flags.FLAGS
 
 if not FLAGS.model_dir:
@@ -53,7 +52,7 @@ def get_features(context, utterance):
 
 def gpinitialize():
     hparams = udc_hparams.create_hparams()
-    model_fn = udc_model.create_model_fn(hparams, model_impl=dual_encoder_model)
+    model_fn = udc_model.create_model_fn(hparams, model_impl=dual_encoder_gru.dual_encoder_model)
     estimator = tf.contrib.learn.Estimator(model_fn=model_fn, model_dir=FLAGS.model_dir)
     estimator._targets_info = tf.contrib.learn.estimators.tensor_signature.TensorSignature(tf.constant(0, shape=[1, 1]))
     return estimator
