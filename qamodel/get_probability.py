@@ -3,12 +3,12 @@ import numpy as np
 import tensorflow as tf
 import udc_model
 import udc_hparams
-from models.dual_encoder import dual_encoder_model
+from models.dual_encoder_gru import dual_encoder_model
 import csv
-from models.helpers import load_vocab
+
 
 tf.flags.DEFINE_string("model_dir", "./runs/GRU", "Directory to load model checkpoints from")
-tf.flags.DEFINE_string("vocab_processor_file", "../output_201708112134/vocab_processor.bin", "Saved vocabulary processor file")
+tf.flags.DEFINE_string("vocab_processor_file", "./runs/GRU/vocab_processor.bin", "Saved vocabulary processor file")
 FLAGS = tf.flags.FLAGS
 outdir="/Users/ektasorathia/Documents/CMPE295B/udc_train"
 
@@ -18,10 +18,15 @@ if not FLAGS.model_dir:
 
 def tokenizer_fn(iterator):
   return (x.split(" ") for x in iterator)
-
 # Load vocabulary
+#vocab_processor = tf.contrib.learn.preprocessing.VocabularyProcessor(
+#    160,
+#    min_frequency=5,
+#    tokenizer_fn=tokenizer_fn)
+
 vp = tf.contrib.learn.preprocessing.VocabularyProcessor.restore(
   FLAGS.vocab_processor_file)
+
 
 QUESTION="""buy 4k laptop would like run ubuntu 1510 believe nt big problem sure adjust text unity ui 
 right thing use virtualbox quite often running ubuntu server believe run problem yet set text within guest 
@@ -45,23 +50,18 @@ def get_features(context, utterance):
   return features, None
 
 ans_dict={}
-f_w = open("./outputs/new_response_lstm_11_28.csv", "w")
 
-def get_probability(context,response):
+def initialize():
     hparams = udc_hparams.create_hparams()
-    wr = csv.writer(f_w, quoting=csv.QUOTE_ALL)
-    final = []
     model_fn = udc_model.create_model_fn(hparams, model_impl=dual_encoder_model)
     estimator = tf.contrib.learn.Estimator(model_fn=model_fn, model_dir=FLAGS.model_dir)
     estimator._targets_info = tf.contrib.learn.estimators.tensor_signature.TensorSignature(tf.constant(0, shape=[1, 1]))
+    return estimator
+
+def get_probability(context,response,estimator):
+
     prob = estimator.predict(input_fn=lambda: get_features(context, response))
     probability = next(prob)[0]
-    #print("{}: {:g}".format(response, probability))
-    #print("%s,%s"%(response,probability))
-    final.append(response)
-    final.append(probability)
-    wr.writerow(final)
-    ans_dict[response] = probability
     return probability
 
 
@@ -70,8 +70,6 @@ def read_answers():
     reader = csv.reader(f)
     for row in reader:
         get_probability(QUESTION,row[0])
-
-    f_w.close()
 
 
 #if __name__ == "__main__":
