@@ -9,11 +9,11 @@ from flask_api import FlaskAPI
 from flask import request, jsonify
 from flask_cors import CORS
 
-tf.flags.DEFINE_string("model_dir", "momdels/GRU", "Directory to load model checkpoints from")
+tf.flags.DEFINE_string("model_dir", "models/GRU", "Directory to load model checkpoints from")
 tf.flags.DEFINE_string("vocab_processor_file", "models/GRU/vocab_processor.bin", "Saved vocabulary processor file")
 FLAGS = tf.flags.FLAGS
 
-if not FLAGS.model_dir:
+if not os.path.exists(FLAGS.model_dir):
     print("You must specify a model directory")
     sys.exit(1)
 
@@ -71,11 +71,12 @@ def get_probability(context, response, estimator):
 #         get_probability(QUESTION, row[0])
 
 
+estimator = gpinitialize()
+
 def create_app():
     app = FlaskAPI(__name__, instance_relative_config=True)
 
     CORS(app)
-    estimator = gpinitialize()
 
     @app.route('/qa/', methods=['POST'])
     def ask():
