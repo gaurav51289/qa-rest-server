@@ -1,12 +1,13 @@
 from flask_api import FlaskAPI
 from flask import request, jsonify
 from flask_cors import CORS
+from qamodel import get_probability as gp
 
 def create_app():
     app = FlaskAPI(__name__, instance_relative_config=True)
 
     CORS(app)
-
+    estimator = gp.initialize()
     @app.route('/qa/', methods=['POST'])
     def ask():
         if request.method == "POST":
@@ -19,8 +20,9 @@ def create_app():
 
                 #TODO: calculate probability
 
-                probability = 0.456
-
+                probability = gp.get_probability(question,candidate,estimator)
+                #probability = 0.456
+                print(probability)
                 response = jsonify({
                     'answerid': '100001',
                     'probability': probability

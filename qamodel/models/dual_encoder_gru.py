@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from models import helpers
+import helpers
 
 FLAGS = tf.flags.FLAGS
 
