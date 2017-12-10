@@ -8,7 +8,7 @@ import csv
 
 
 tf.flags.DEFINE_string("model_dir", "./runs/GRU", "Directory to load model checkpoints from")
-tf.flags.DEFINE_string("vocab_processor_file", "./runs/GRU/vocab_processor.bin", "Saved vocabulary processor file")
+tf.flags.DEFINE_string("vocab_processor_file", "/Users/ektasorathia/Documents/CMPE295B/Final/qa-rest-server/qamodel/runs/GRU/vocab_processor.bin", "Saved vocabulary processor file")
 FLAGS = tf.flags.FLAGS
 outdir="/Users/ektasorathia/Documents/CMPE295B/udc_train"
 
@@ -72,5 +72,5 @@ def read_answers():
         get_probability(QUESTION,row[0])
 
 
-#if __name__ == "__main__":
-#   read_answers()
+if __name__ == "__main__":
+   read_answers()
