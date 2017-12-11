@@ -28,14 +28,6 @@ def tokenizer_fn(iterator):
 
 vp = tf.contrib.learn.preprocessing.VocabularyProcessor.restore(FLAGS.vocab_processor_file)
 
-
-#
-# QUESTION = """buy 4k laptop would like run ubuntu 1510 believe nt big problem sure adjust text unity ui
-# right thing use virtualbox quite often running ubuntu server believe run problem yet set text within guest
-# operating system small barely readable right way scaling guest o view like instance scale factor time 2 possible
-# run application adapt 4k kind magnifying lens like instance running virtualbox doublesize zoom"""
-
-
 def get_features(context, utterance):
     context_matrix = np.array(list(vp.transform([context])))
     utterance_matrix = np.array(list(vp.transform([utterance])))
@@ -63,14 +55,6 @@ def get_probability(context, response, estimator):
     probability = next(prob)[0]
     return probability
 
-#
-# def read_answers():
-#     f = open("/Users/ektasorathia/Documents/CMPE295B/udc_train/chatbot-retrieval/answer_clipped.csv", 'rb')
-#     reader = csv.reader(f)
-#     for row in reader:
-#         get_probability(QUESTION, row[0])
-
-
 estimator = gpinitialize()
 
 def create_app():
@@ -94,14 +78,10 @@ def create_app():
 
                 print(probability)
                 response = jsonify({
-                    'answerid': '100001',
                     'probability': str(probability)
                 })
 
-                response.status_code = 200
-
                 return response
-
     return app
 
 
