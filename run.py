@@ -68,14 +68,8 @@ def create_app():
             question = str(request.data.get('question'))
             candidate = str(request.data.get('candidate'))
 
-            # TODO: answer id in the request probably
-
             if question and candidate:
-                # TODO: calculate probability
-
                 probability = get_probability(question, candidate, estimator)
-                # probability = 0.456
-
                 print(probability)
                 response = jsonify({
                     'probability': str(probability)
